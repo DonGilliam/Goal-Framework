@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G.O.A.L. Framework - Get Goaling!</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark-green: #1B4332;
+    --mid-green: #2D6A4F;
+    --light-green: #52B788;
+    --orange: #E07A2F;
+    --light-orange: #F4A261;
+    --cream: #FAF3E8;
+    --white: #FFFFFF;
+    --gray: #E8E8E8;
+    --dark-text: #1A1A1A;
+    --field-bg: #FFFDF8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: var(--cream);
+    color: var(--dark-text);
+    min-height: 100vh;
+  }
+
+  .form-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0;
+    background: var(--white);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  /* Header */
+  .header {
+    background: var(--dark-green);
+    padding: 28px 24px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    width: 120px;
+    height: 120px;
+    border: 3px solid rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+
+  .header h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2.2rem;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.1;
+  }
+
+  .header h1 .highlight {
+    color: var(--orange);
+  }
+
+  .header .subtitle {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.7);
+    margin-top: 6px;
+    font-weight: 400;
+  }
+
+  .header .authors {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* Intro */
+  .intro {
+    background: linear-gradient(135deg, var(--cream) 0%, #f0ebe0 100%);
+    padding: 18px 24px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: #444;
+    border-bottom: 3px solid var(--orange);
+  }
+
+  /* GOAL banner */
+  .goal-banner {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 16px 24px;
+    background: var(--white);
+  }
+
+  .goal-letter-block {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .goal-letter-block .letter {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--white);
+    background: var(--orange);
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .goal-letter-block .label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--dark-green);
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+  }
+
+  /* Motto */
+  .motto {
+    text-align: center;
+    padding: 10px 24px 16px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    color: var(--dark-green);
+    font-weight: 600;
+    font-style: italic;
+  }
+
+  /* Sections */
+  .section {
+    margin: 0 16px 16px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--gray);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--dark-green);
+  }
+
+  .section-header .letter-badge {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-green);
+    background: var(--orange);
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .section-header h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+  }
+
+  .section-body {
+    padding: 16px;
+    background: var(--white);
+  }
+
+  /* Text areas */
+  textarea, input[type="text"] {
+    width: 100%;
+    border: 2px solid var(--gray);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--dark-text);
+    background: var(--field-bg);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: vertical;
+  }
+
+  textarea:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: var(--light-green);
+    box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.15);
+  }
+
+  textarea::placeholder, input[type="text"]::placeholder {
+    color: #aaa;
+    font-style: italic;
+  }
+
+  .field-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--mid-green);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* O section two-column */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 500px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+
+  .two-col .col label {
+    display: block;
+  }
+
+  /* A section - 2x2 grid */
+  .strategy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 500px) {
+    .strategy-grid { grid-template-columns: 1fr; }
+  }
+
+  .strategy-cell .field-label {
+    font-size: 0.75rem;
+  }
+
+  .strategy-cell .field-sublabel {
+    font-size: 0.7rem;
+    color: #888;
+    margin-bottom: 6px;
+    font-weight: 400;
+  }
+
+  /* L section - checkboxes */
+  .commit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray);
+  }
+
+  .commit-item:last-child { border-bottom: none; }
+
+  .commit-item input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--orange);
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+  }
+
+  .commit-item .commit-text {
+    font-size: 0.88rem;
+    flex: 1;
+  }
+
+  .commit-item input[type="text"] {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+
+  .custom-commit {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  /* Download button */
+  .actions {
+    padding: 20px 16px 28px;
+    text-align: center;
+  }
+
+  .actions-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn-download:hover { transform: translateY(-1px); }
+  .btn-download:active { transform: translateY(0); }
+
+  .btn-download svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  .btn-share {
+    background: var(--orange);
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(224,122,47,0.3);
+  }
+  .btn-share:hover { background: #c96a22; }
+
+  .btn-dl {
+    background: var(--dark-green);
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(27,67,50,0.3);
+  }
+  .btn-dl:hover { background: #143728; }
+
+  .download-note {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 8px;
+  }
+
+  /* Footer */
+  .footer {
+    background: var(--dark-green);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .footer span {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .footer .footer-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    color: var(--orange);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Print / PDF styles */
+  @media print {
+    body { background: white; }
+    .form-container { box-shadow: none; }
+    .actions { display: none; }
+    textarea, input[type="text"] { border: 1px solid #ccc; }
+  }
+
+  /* Loading overlay */
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .loading-overlay.active { display: flex; }
+
+  .loading-box {
+    background: white;
+    padding: 28px 36px;
+    border-radius: 12px;
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  .loading-box .spinner {
+    width: 36px;
+    height: 36px;
+    border: 4px solid var(--gray);
+    border-top-color: var(--orange);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 12px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="form-container" id="formContainer">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Get <span class="highlight">Goal</span>ing!</h1>
+    <div class="subtitle">Building Big Wins One Play at a Time</div>
+    <div class="authors">Jessica Flores &amp; Melinda Gilliam</div>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro">
+    Winning a soccer game is a result of actions, decisions, and intentional effort executed well. This concept works off the field as well. Use the <strong>G.O.A.L. framework</strong> to stack progress toward victory of personal, professional, individual, and team goals.
+  </div>
+
+  <!-- GOAL Banner -->
+  <div class="goal-banner">
+    <div class="goal-letter-block">
+      <span class="letter">G</span>
+      <span class="label">Get<br>Specific</span>
+    </div>
+    <div class="goal-letter-block">
+      <span class="letter">O</span>
+      <span class="label">Own the<br>Outcome</span>
+    </div>
+    <div class="goal-letter-block">
+      <span class="letter">A</span>
+      <span class="label">Assemble<br>the Plan</span>
+    </div>
+    <div class="goal-letter-block">
+      <span class="letter">L</span>
+      <span class="label">Lock<br>In</span>
+    </div>
+  </div>
+
+  <div class="motto"><em>I/we will WIN by achieving our G.O.A.L.</em></div>
+
+  <!-- G Section -->
+  <div class="section">
+    <div class="section-header">
+      <span class="letter-badge">G</span>
+      <h2>The Focus of My Goal Will Be:</h2>
+    </div>
+    <div class="section-body">
+      <textarea id="goalFocus" rows="4" placeholder="Describe your specific goal here..."></textarea>
+    </div>
+  </div>
+
+  <!-- O Section -->
+  <div class="section">
+    <div class="section-header">
+      <span class="letter-badge">O</span>
+      <h2>What Will Be Different When You Accomplish Your Goal?</h2>
+    </div>
+    <div class="section-body">
+      <div class="two-col">
+        <div class="col">
+          <div class="field-label">Benefits of achieving this goal:</div>
+          <textarea id="benefits" rows="5" placeholder="What positive changes will happen?"></textarea>
+        </div>
+        <div class="col">
+          <div class="field-label">Consequences if not achieved:</div>
+          <textarea id="consequences" rows="5" placeholder="What happens if you don't reach this goal?"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- A Section -->
+  <div class="section">
+    <div class="section-header">
+      <span class="letter-badge">A</span>
+      <h2>Win the Game with Strategy</h2>
+    </div>
+    <div class="section-body">
+      <div class="strategy-grid">
+        <div class="strategy-cell">
+          <div class="field-label">Team</div>
+          <div class="field-sublabel">fans, coaches, members, etc.</div>
+          <textarea id="team" rows="4" placeholder="Who will support you?"></textarea>
+        </div>
+        <div class="strategy-cell">
+          <div class="field-label">Training</div>
+          <div class="field-sublabel">knowledge, practice, skills</div>
+          <textarea id="training" rows="4" placeholder="What skills do you need to develop?"></textarea>
+        </div>
+        <div class="strategy-cell">
+          <div class="field-label">Tape</div>
+          <div class="field-sublabel">exposure, feedback, shadowing</div>
+          <textarea id="tape" rows="4" placeholder="How will you learn and get feedback?"></textarea>
+        </div>
+        <div class="strategy-cell">
+          <div class="field-label">Timing</div>
+          <div class="field-sublabel">pace, deadlines, milestones</div>
+          <textarea id="timing" rows="4" placeholder="Key dates and milestones?"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- L Section -->
+  <div class="section">
+    <div class="section-header">
+      <span class="letter-badge">L</span>
+      <h2>Commit and Make It Happen!</h2>
+    </div>
+    <div class="section-body">
+      <div class="commit-item">
+        <input type="checkbox" id="check1">
+        <span class="commit-text">Add regular reminders to my calendar.</span>
+      </div>
+      <div class="commit-item">
+        <input type="checkbox" id="check2">
+        <span class="commit-text">Schedule my first check-in &amp; celebration.</span>
+      </div>
+      <div class="commit-item">
+        <input type="checkbox" id="check3">
+        <span class="commit-text">Tell two people about my goal.</span>
+      </div>
+      <div class="commit-item">
+        <input type="checkbox" id="check4">
+        <input type="text" id="custom1" placeholder="Add your own commitment...">
+      </div>
+      <div class="commit-item">
+        <input type="checkbox" id="check5">
+        <input type="text" id="custom2" placeholder="Add your own commitment...">
+      </div>
+      <div class="commit-item">
+        <input type="checkbox" id="check6">
+        <input type="text" id="custom3" placeholder="Add your own commitment...">
+      </div>
+    </div>
+  </div>
+
+  <!-- Download Actions -->
+  <div class="actions">
+    <div class="actions-buttons">
+      <button class="btn-download btn-share" id="btnShare" onclick="sharePDF()">
+        <svg viewBox="0 0 24 24"><path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11a2 2 0 01-2 2H6a2 2 0 01-2-2V10a2 2 0 012-2h3v2H6v11h12V10h-3V8h3a2 2 0 012 2z"/></svg>
+        Save to Phone
+      </button>
+      <button class="btn-download btn-dl" onclick="downloadPDF()">
+        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Download PDF
+      </button>
+    </div>
+    <div class="download-note" id="actionNote">Choose an option to save your completed form.</div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span class="footer-title">GOOOAALL! Building Big Wins One Play at a Time</span>
+    <span>Jessica Flores &amp; Melinda Gilliam</span>
+  </div>
+
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <div>Generating your PDF...</div>
+  </div>
+</div>
+
+<script>
+// Detect if Web Share with files is supported (iOS Safari, modern Android Chrome)
+function canShareFiles() {
+  if (!navigator.canShare) return false;
+  try {
+    const testFile = new File(['test'], 'test.pdf', { type: 'application/pdf' });
+    return navigator.canShare({ files: [testFile] });
+  } catch (e) {
+    return false;
+  }
+}
+
+// On load: hide "Save to Phone" if share API not supported (desktop browsers)
+document.addEventListener('DOMContentLoaded', function() {
+  const btnShare = document.getElementById('btnShare');
+  const note = document.getElementById('actionNote');
+  if (!canShareFiles()) {
+    btnShare.style.display = 'none';
+    note.textContent = 'Your completed form will download as a PDF.';
+  } else {
+    note.textContent = 'Save to your phone\u2019s Files, or share via text, email, or AirDrop.';
+  }
+});
+
+async function generatePDFBlob() {
+  const container = document.getElementById('formContainer');
+  const actions = document.querySelector('.actions');
+  actions.style.display = 'none';
+
+  // Replace textareas/inputs with styled divs for clean capture
+  const fields = container.querySelectorAll('textarea, input[type="text"]');
+  const originals = [];
+  fields.forEach(field => {
+    const div = document.createElement('div');
+    div.style.cssText = `
+      width: 100%;
+      min-height: ${field.offsetHeight}px;
+      border: 2px solid #E8E8E8;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: #1A1A1A;
+      background: #FFFDF8;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      box-sizing: border-box;
+    `;
+    div.textContent = field.value || '';
+    originals.push({ field, parent: field.parentNode, next: field.nextSibling });
+    field.parentNode.replaceChild(div, field);
+  });
+
+  const canvas = await html2canvas(container, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#FFFFFF',
+    logging: false,
+    windowWidth: 720
+  });
+
+  // Restore original fields
+  originals.forEach(({ field, parent, next }) => {
+    const div = next ? next.previousSibling : parent.lastChild;
+    if (div && div.nodeType === 1 && div.tagName === 'DIV') {
+      parent.replaceChild(field, div);
+    }
+  });
+
+  actions.style.display = '';
+
+  const imgData = canvas.toDataURL('image/jpeg', 0.95);
+  const { jsPDF } = window.jspdf;
+  const imgWidth = canvas.width;
+  const imgHeight = canvas.height;
+  const pdfWidth = 612;
+  const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
+
+  const pdf = new jsPDF({
+    orientation: pdfHeight > pdfWidth ? 'portrait' : 'landscape',
+    unit: 'pt',
+    format: [pdfWidth, pdfHeight]
+  });
+
+  pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+  return pdf.output('blob');
+}
+
+// SHARE button — uses native share sheet (iOS & Android)
+async function sharePDF() {
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('active');
+
+  try {
+    const pdfBlob = await generatePDFBlob();
+    const file = new File([pdfBlob], 'My_GOAL_Framework.pdf', { type: 'application/pdf' });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        title: 'My G.O.A.L. Framework',
+        files: [file]
+      });
+    } else {
+      // If share failed unexpectedly, fall back to download
+      fallbackDownload(pdfBlob);
+    }
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      console.error('Share error:', err);
+      // Try download as fallback
+      try {
+        const pdfBlob = await generatePDFBlob();
+        fallbackDownload(pdfBlob);
+      } catch (e) {
+        alert('There was an issue generating your PDF. Please try again.');
+      }
+    }
+  }
+
+  overlay.classList.remove('active');
+}
+
+// DOWNLOAD button — works on all devices (desktop, Android, iOS)
+async function downloadPDF() {
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('active');
+
+  try {
+    const pdfBlob = await generatePDFBlob();
+
+    // On iOS, window.open with blob works better than <a> download
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (isIOS) {
+      // iOS: open blob in new tab — user taps share icon to save to Files
+      const blobUrl = URL.createObjectURL(pdfBlob);
+      window.open(blobUrl, '_blank');
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 120000);
+    } else {
+      // Android & Desktop: trigger direct file download
+      fallbackDownload(pdfBlob);
+    }
+  } catch (err) {
+    console.error('Download error:', err);
+    alert('There was an issue generating your PDF. Please try again.');
+  }
+
+  overlay.classList.remove('active');
+}
+
+// Direct download via <a> tag (works on Android Chrome, desktop browsers)
+function fallbackDownload(blob) {
+  const blobUrl = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = blobUrl;
+  a.download = 'My_GOAL_Framework.pdf';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+}
+</script>
+
+</body>
+</html>
